@@ -45,7 +45,7 @@ version_downloads = versions.map do |version|
       'downloads' =>version['downloads_count']
     }
   end
-end.compact!
+end.compact!.reverse!
 
 # get the downloads with each versions and days
 version_downloads_trend = versions.map do |version|
@@ -56,10 +56,10 @@ version_downloads_trend = versions.map do |version|
       'downloads_date' => version_downloads_days
     }
   end
-end.compact!
+end.compact!.reverse!
 
 # get the commit activity in last year
-last_year_commit_activity = HTTParty.get(COMPARE_GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{ACCESS_TOKEN}")
+last_year_commit_activity = HTTParty.get(GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{ACCESS_TOKEN}")
 
 # get the dependencies
 dependencies = oga_info['dependencies']
@@ -108,6 +108,8 @@ until stop
 
   page += 1
 end
+
+closed_issues.reverse!
 
 # get the date of the last commit
 commit = github.repos.commits.list(REPO_USER, REPO_NAME).to_ary[0].to_hash['commit']['author']['date']
