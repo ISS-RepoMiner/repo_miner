@@ -37,9 +37,37 @@ github = Github.new basic_auth: "#{rubygems.github_account}:#{rubygems.github_pa
 versions = Gems.versions GEM_NAME
 oga_info = Gems.info GEM_NAME
 
+# get the downloads of each versions
+version_downloads = versions.map do |version|
+  if version['platform'] === 'ruby'
+    {
+      'number' => version['number'],
+      'downloads' =>version['downloads_count']
+    }
+  end
+end.compact!
+
+# get the downloads with each versions and days
+version_downloads_trend = versions.map do |version|
+  if version['platform'] === 'ruby'
+    version_downloads_days = Gems.downloads GEM_NAME, version['number'], Date.today - 30, Date.today
+    {
+      'number' => version['number'],
+      'downloads_date' => version_downloads_days
+    }
+  end
+end.compact!
+
+# get the commit activity in last year
 last_year_commit_activity = HTTParty.get(COMPARE_GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{ACCESS_TOKEN}")
 
+# get the dependencies
+dependencies = oga_info['dependencies']
 
+# total number of downloads
+total_downloads = oga_info['downloads']
+
+# Get the contributors
 contributors = HTTParty.get(GITHUB_API_BASE_URL + "/contributors?access_token=#{ACCESS_TOKEN}").map do |contributor|
   {
     'name' => contributor['login'],
@@ -47,15 +75,18 @@ contributors = HTTParty.get(GITHUB_API_BASE_URL + "/contributors?access_token=#{
   }
 end
 
+# get the total commits
 commits = contributors.reduce(0) do |sum, num|
   sum + num['contributions']
 end
 
+# get numbers of forks, stars and issues
 repos_meta = HTTParty.get(GITHUB_API_BASE_URL)
 forks = repos_meta['forks_count']
 stars = repos_meta['stargazers_count']
 issues = repos_meta['open_issues_count']
 
+# get information of the closed issues
 closed_issues = []
 stop = false
 page = 1
@@ -78,32 +109,12 @@ until stop
   page += 1
 end
 
+# get the date of the last commit
 commit = github.repos.commits.list(REPO_USER, REPO_NAME).to_ary[0].to_hash['commit']['author']['date']
 last_commit = (Date.today - Date.parse(commit)).to_i
 
-dependencies = oga_info['dependencies']
 
-total_downloads = oga_info['downloads']
-
-version_downloads = versions.map do |version|
-  if version['platform'] === 'ruby'
-    {
-      'number' => version['number'],
-      'downloads' =>version['downloads_count']
-    }
-  end
-end.compact!
-
-version_downloads_trend = versions.map do |version|
-  if version['platform'] === 'ruby'
-    version_downloads_days = Gems.downloads GEM_NAME, version['number'], Date.today - 30, Date.today
-    {
-      'number' => version['number'],
-      'downloads_date' => version_downloads_days
-    }
-  end
-end.compact!
-
+# aggregate the data
 gem_info = {
   'name'  => GEM_NAME,
   'total_downloads' => total_downloads,
@@ -123,4 +134,3 @@ gem_info = {
 puts gem_info
 
 result = client[:gems].insert_one(gem_info)
-puts result
