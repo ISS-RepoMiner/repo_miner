@@ -7,6 +7,9 @@ require 'configuration'
 Kernel.load 'config/local.rb'
 
 rubygems = Configuration.for 'rubygems'
+stackoverflow = Configuration.for 'stackoverflow'
+
+
 client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 
 ## done list
@@ -116,6 +119,23 @@ commit = github.repos.commits.list(REPO_USER, REPO_NAME).to_ary[0].to_hash['comm
 last_commit = (Date.today - Date.parse(commit)).to_i
 
 
+#***********************************
+#STACKOVERFLOW DATA COLLECTION
+#***********************************
+STACKOVERFLOW_API = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=creation&q=oga gem&site=stackoverflow&key=#{stackoverflow.stackoverflow_token}"
+
+questions = []
+
+fetch_questions = HTTParty.get(STACKOVERFLOW_API)
+
+fetch_questions['items'].each do |q|
+  questions << {
+    'creation_date' => q['creation_date'],
+    'title' => q ['title']
+  }
+end
+
+
 # aggregate the data
 gem_info = {
   'name'  => GEM_NAME,
@@ -130,9 +150,12 @@ gem_info = {
   'commits' => commits,
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
-  'closed_issues' => closed_issues
+  'closed_issues' => closed_issues,
+  'questions' => questions
 }
 
+
+#puts contributors
 puts gem_info
 
 result = client[:gems].insert_one(gem_info)
