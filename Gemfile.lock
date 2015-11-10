@@ -49,3 +49,4 @@ DEPENDENCIES
   github_api
   httparty
   mongo (~> 2.1)
+  nokogiri

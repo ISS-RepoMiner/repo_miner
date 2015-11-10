@@ -4,6 +4,8 @@ require 'mongo'
 require 'github_api'
 require 'httparty'
 require 'configuration'
+require 'nokogiri'
+require 'open-uri'
 Kernel.load 'config/local.rb'
 
 rubygems = Configuration.for 'rubygems'
@@ -23,6 +25,7 @@ client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 #  number of commits: commits
 #  the issues/PRs created time, closed, time and duration: closed_issues
 #  the commit activity in last year: last_year_commit_activity
+#  the rating on Ruby Toolbox: rating
 #
 ##
 
@@ -30,8 +33,12 @@ GEM_NAME = 'oga'
 REPO_NAME = 'oga'
 REPO_USER = 'YorickPeterse'
 
+USER_AGENT = rubygems.user_agent
 GITHUB_API_BASE_URL = "https://api.github.com/repos/#{REPO_USER}/#{REPO_NAME}"
 ACCESS_TOKEN = rubygems.github_token
+RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
+RATING_XPATH = "//div[@class='teaser-bar']//li[last()-1]//a"
+
 github = Github.new basic_auth: "#{rubygems.github_account}:#{rubygems.github_password}"
 
 versions = Gems.versions GEM_NAME
@@ -115,6 +122,12 @@ closed_issues.reverse!
 commit = github.repos.commits.list(REPO_USER, REPO_NAME).to_ary[0].to_hash['commit']['author']['date']
 last_commit = (Date.today - Date.parse(commit)).to_i
 
+# get the raking and Developent activity on Ruby ToolBox
+document = open(RUBY_TOOLBOX_BASE_URL + GEM_NAME,
+    'User-Agent' => USER_AGENT
+  )
+noko_document = Nokogiri::HTML(document)
+rating = noko_document.xpath(RATING_XPATH).text
 
 # aggregate the data
 gem_info = {
@@ -127,6 +140,7 @@ gem_info = {
   'forks' => forks,
   'stars' => stars,
   'issues' => issues,
+  'rating' => rating,
   'commits' => commits,
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
