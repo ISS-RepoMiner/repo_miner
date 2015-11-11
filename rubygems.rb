@@ -39,7 +39,13 @@ ACCESS_TOKEN = rubygems.github_token
 RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
 RATING_XPATH = "//div[@class='teaser-bar']//li[last()-1]//a"
 
-github = Github.new basic_auth: "#{rubygems.github_account}:#{rubygems.github_password}"
+`stty -echo`
+print 'Github Password (not stored): '
+github_password = gets.chomp
+`stty echo`
+puts ""
+
+github = Github.new basic_auth: "#{rubygems.github_account}:#{github_password}"
 
 versions = Gems.versions GEM_NAME
 oga_info = Gems.info GEM_NAME
