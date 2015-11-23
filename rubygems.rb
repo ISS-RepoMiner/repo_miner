@@ -26,6 +26,7 @@ client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 #  the issues/PRs created time, closed, time and duration: closed_issues
 #  the commit activity in last year: last_year_commit_activity
 #  the rating on Ruby Toolbox: rating
+#  the word count in README.md: freqs
 #
 ##
 
@@ -34,6 +35,7 @@ REPO_NAME = 'oga'
 REPO_USER = 'YorickPeterse'
 
 USER_AGENT = rubygems.user_agent
+GITHUB_README_URL = "https://raw.githubusercontent.com/#{REPO_USER}/#{REPO_NAME}/master/README.md"
 GITHUB_API_BASE_URL = "https://api.github.com/repos/#{REPO_USER}/#{REPO_NAME}"
 ACCESS_TOKEN = rubygems.github_token
 RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
@@ -63,7 +65,7 @@ end.compact!.reverse!
 # get the downloads with each versions and days
 version_downloads_trend = versions.map do |version|
   if version['platform'] === 'ruby'
-    version_downloads_days = Gems.downloads GEM_NAME, version['number'], Date.today - 30, Date.today
+    version_downloads_days = Gems.downloads GEM_NAME, version['number'], version['created_at'], Date.today
     {
       'number' => version['number'],
       'downloads_date' => version_downloads_days
@@ -135,6 +137,18 @@ document = open(RUBY_TOOLBOX_BASE_URL + GEM_NAME,
 noko_document = Nokogiri::HTML(document)
 rating = noko_document.xpath(RATING_XPATH).text
 
+# get the readme file
+readme = HTTParty.get(GITHUB_README_URL)
+words = readme.split(' ')
+freqs = Hash.new(0)
+words.each do |word|
+  if word =~ /^\w+$/
+    freqs[word] += 1 
+  end
+end
+freqs = freqs.sort_by { |word, freq| freq }.reverse!
+freqs.each { |word, freq| puts word + ' ' + freq.to_s }
+
 # aggregate the data
 gem_info = {
   'name'  => GEM_NAME,
@@ -150,7 +164,8 @@ gem_info = {
   'commits' => commits,
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
-  'closed_issues' => closed_issues
+  'closed_issues' => closed_issues,
+  'readme_count' => freqs
 }
 
 puts gem_info
