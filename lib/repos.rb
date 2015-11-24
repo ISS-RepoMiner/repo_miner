@@ -17,6 +17,8 @@ module Repos
       @github_password = github_password
       @rubygems = Configuration.for 'rubygems'
       @access_token = @rubygems.github_token
+      @repo_user = repo_user
+      @repo_name = repo_name
     end
     
     # get the commit activity in last year
@@ -99,7 +101,7 @@ module Repos
     def get_last_commits_days
       github = Github.new basic_auth: "#{@rubygems.github_account}:#{@github_password}"
 
-      commit = github.repos.commits.list(REPO_USER, REPO_NAME).to_ary[0].to_hash['commit']['author']['date']
+      commit = github.repos.commits.list(@repo_user, @repo_name).to_ary[0].to_hash['commit']['author']['date']
       last_commit = (Date.today - Date.parse(commit)).to_i
 
       last_commit
@@ -142,12 +144,15 @@ module Repos
       version_downloads
     end 
 
-    def get_version_downloads_trend
+    def get_version_downloads_trend(start_date='', end_date='')
       versions = Gems.versions @gem_name
 
+      end_date = Date.today if end_date.to_s == ''
       version_downloads_trend = versions.map do |version|
+        start = version['created_at'] if start_date.to_s == ''
+
         if version['platform'] === 'ruby'
-          version_downloads_days = Gems.downloads @gem_name, version['number'], version['created_at'], Date.today
+          version_downloads_days = Gems.downloads @gem_name, version['number'], start, end_date
           {
             'number' => version['number'],
             'downloads_date' => version_downloads_days

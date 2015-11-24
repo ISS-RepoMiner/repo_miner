@@ -34,6 +34,7 @@ readme_word_count = github.get_readme_word_count
 
 version_downloads = rubygems.get_version_downloads
 version_downloads_trend = rubygems.get_version_downloads_trend
+
 dependencies = rubygems.get_dependencies
 total_downloads = rubygems.get_total_downloads
 
@@ -55,7 +56,8 @@ gem_info = {
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
   'issues_info' => issues_info,
-  'readme_word_count' => readme_word_count
+  'readme_word_count' => readme_word_count,
+  'created_at' => DateTime.now
 }
 
 puts gem_info
