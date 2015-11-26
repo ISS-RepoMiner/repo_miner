@@ -21,6 +21,7 @@ client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 github = Repos::GithubData.new(github_password, repo_username, repo_name)
 rubygems = Repos::RubyGemsData.new(gem_name)
 ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
+stackoverflow = Repos::StackOverflow.new(gem_name)
 
 last_year_commit_activity = github.get_last_year_commit_activity
 contributors = github.get_contributors
@@ -40,6 +41,9 @@ total_downloads = rubygems.get_total_downloads
 
 raking = ruby_toolbox.get_raking
 
+#stackoverflow info
+questions = stackoverflow.get_questions
+
 # aggregate the data
 gem_info = {
   'name'  => gem_name,
@@ -57,6 +61,7 @@ gem_info = {
   'contributors' => contributors,
   'issues_info' => issues_info,
   'readme_word_count' => readme_word_count,
+  'questions' => questions,
   'created_at' => DateTime.now
 }
 
