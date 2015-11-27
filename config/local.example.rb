@@ -6,3 +6,7 @@ Configuration.for('rubygems') do
   github_password GITHUB_PASSWORD
   user_agent USER_AGENT
 end
+
+Configuration.for('stackoverflow') do
+	stackoverflow_token STACKOVERFLOW_TOKEN
+end
