@@ -185,19 +185,19 @@ module Repos
       rubygems = Configuration.for 'rubygems'
       @user_agent = rubygems.user_agent
       @RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
-      @RAKING_XPATH = "//div[@class='teaser-bar']//li[last()-1]//a"
+      @RANKING_PATH = "//div[@class='teaser-bar']//li[last()-1]//a"
       @gem_name = gem_name
     end
 
-    # get the raking on Ruby ToolBox
-    def get_raking
+    # get the ranking on Ruby ToolBox
+    def get_ranking
       document = open(@RUBY_TOOLBOX_BASE_URL + @gem_name,
           'User-Agent' => @user_agent
         )
       noko_document = Nokogiri::HTML(document)
-      raking = noko_document.xpath(@RAKING_XPATH).text
+      ranking = noko_document.xpath(@RANKING_PATH).text
 
-      raking
+      ranking
     end 
   end
 

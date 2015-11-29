@@ -39,7 +39,7 @@ version_downloads_trend = rubygems.get_version_downloads_trend
 dependencies = rubygems.get_dependencies
 total_downloads = rubygems.get_total_downloads
 
-raking = ruby_toolbox.get_raking
+ranking = ruby_toolbox.get_ranking
 
 #stackoverflow info
 questions = stackoverflow.get_questions
@@ -55,7 +55,7 @@ gem_info = {
   'forks' => forks,
   'stars' => stars,
   'issues' => issues,
-  'raking' => raking,
+  'ranking' => ranking,
   'commits' => total_commits,
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,

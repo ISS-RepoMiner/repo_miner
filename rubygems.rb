@@ -25,7 +25,7 @@ client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 #  number of commits: commits
 #  the issues/PRs created time, closed, time and duration: closed_issues
 #  the commit activity in last year: last_year_commit_activity
-#  the rating on Ruby Toolbox: rating
+#  the ranking on Ruby Toolbox: ranking
 #  the word count in README.md: freqs
 #
 ##
@@ -39,7 +39,7 @@ GITHUB_README_URL = "https://raw.githubusercontent.com/#{REPO_USER}/#{REPO_NAME}
 GITHUB_API_BASE_URL = "https://api.github.com/repos/#{REPO_USER}/#{REPO_NAME}"
 ACCESS_TOKEN = rubygems.github_token
 RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
-RATING_XPATH = "//div[@class='teaser-bar']//li[last()-1]//a"
+RANKING_PATH = "//div[@class='teaser-bar']//li[last()-1]//a"
 
 `stty -echo`
 print 'Github Password (not stored): '
@@ -135,7 +135,7 @@ document = open(RUBY_TOOLBOX_BASE_URL + GEM_NAME,
     'User-Agent' => USER_AGENT
   )
 noko_document = Nokogiri::HTML(document)
-rating = noko_document.xpath(RATING_XPATH).text
+ranking = noko_document.xpath(RANKING_PATH).text
 
 # get the readme file
 readme = HTTParty.get(GITHUB_README_URL)
@@ -173,7 +173,7 @@ gem_info = {
   'forks' => forks,
   'stars' => stars,
   'issues' => issues,
-  'rating' => rating,
+  'ranking' => ranking,
   'commits' => commits,
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
