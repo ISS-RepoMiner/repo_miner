@@ -149,6 +149,19 @@ end
 freqs = freqs.sort_by { |word, freq| freq }.reverse!
 freqs.each { |word, freq| puts word + ' ' + freq.to_s }
 
+#STACKOVERFLOW DATA COLLECTION
+STACKOVERFLOW_API = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=creation&q=oga gem&site=stackoverflow&key=#{stackoverflow.stackoverflow_token}"
+
+questions = []
+fetch_questions = HTTParty.get(STACKOVERFLOW_API)
+fetch_questions['items'].each do |q|
+  questions << {
+    'creation_date' => q['creation_date'],
+    'title' => q ['title'].split(' '),
+    'views' => q['view_count']
+  }
+end
+
 # aggregate the data
 gem_info = {
   'name'  => GEM_NAME,
@@ -165,9 +178,10 @@ gem_info = {
   'commit_activity_last_year' => last_year_commit_activity,
   'contributors' => contributors,
   'closed_issues' => closed_issues,
-  'readme_count' => freqs
+  'readme_count' => freqs,
+  'questions' => questions
 }
 
 puts gem_info
 
-result = client[:gems].insert_one(gem_info)
+#result = client[:gems].insert_one(gem_info)

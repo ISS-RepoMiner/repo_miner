@@ -200,4 +200,27 @@ module Repos
       raking
     end 
   end
+
+  class StackOverflow
+    def initialize(gem_name)
+      stackoverflow = Configuration.for 'stackoverflow'
+      @STACKOVERFLOW_API = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=creation&q=#{gem_name}&site=stackoverflow&key=#{stackoverflow.stackoverflow_token}"
+    end
+
+    #get questions from stackexchange
+    def get_questions
+      questions = []
+      fetch_questions = HTTParty.get(@STACKOVERFLOW_API)
+      fetch_questions['items'].each do |q|
+        questions << {
+          'creation_date' => q['creation_date'],
+          'title' => q ['title'].split(' '),
+          'views' => q['view_count']
+        }
+      end
+
+      questions
+    end
+  end
+
 end 
