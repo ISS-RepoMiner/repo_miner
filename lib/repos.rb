@@ -146,8 +146,9 @@ module Repos
             'downloads' =>version['downloads_count']
           }
         end
-      end.compact!.reverse!
+      end.reverse!
 
+      version_downloads.compact! if version_downloads.include? nil
       version_downloads
     end 
 
@@ -165,8 +166,9 @@ module Repos
             'downloads_date' => version_downloads_days
           }
         end
-      end.compact!.reverse!
+      end.reverse!
 
+      version_downloads_trend.compact! if version_downloads_trend.include? nil
       version_downloads_trend
     end
 
