@@ -120,7 +120,7 @@ module Repos
       words = readme.split(' ')
       freqs = Hash.new(0)
       words.each do |word|
-        if word =~ /^\w+$/ && !stop_words.include?(word)
+        if word =~ /^\w+$/ && !stop_words.include?(word.downcase)
           freqs[word] += 1 
         end
       end
@@ -200,12 +200,15 @@ module Repos
 
     # get the ranking on Ruby ToolBox
     def get_ranking
-      document = open(@RUBY_TOOLBOX_BASE_URL + @gem_name,
-          'User-Agent' => @user_agent
-        )
-      noko_document = Nokogiri::HTML(document)
-      ranking = noko_document.xpath(@RANKING_PATH).text
-
+      begin
+        document = open(@RUBY_TOOLBOX_BASE_URL + @gem_name,
+            'User-Agent' => @user_agent
+          )
+        noko_document = Nokogiri::HTML(document)
+        ranking = noko_document.xpath(@RANKING_PATH).text
+      rescue
+        ranking = 0
+      end
       ranking
     end 
   end
