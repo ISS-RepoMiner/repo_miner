@@ -18,7 +18,7 @@ puts ""
 
 client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 
-github = Repos::GithubData.new(github_password, repo_username, repo_name)
+github = Repos::GithubData.new(repo_username, repo_name, github_password)
 rubygems = Repos::RubyGemsData.new(gem_name)
 ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
 stackoverflow = Repos::StackOverflow.new(gem_name)

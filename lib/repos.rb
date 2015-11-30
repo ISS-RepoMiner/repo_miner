@@ -11,12 +11,12 @@ module Repos
   Kernel.load 'config/local.rb'
 
   class GithubData
-    def initialize(github_password, repo_user, repo_name)
+    def initialize(repo_user, repo_name, github_password='')
       @GITHUB_README_URL = "https://raw.githubusercontent.com/#{repo_user}/#{repo_name}/master/README.md"
       @GITHUB_API_BASE_URL = "https://api.github.com/repos/#{repo_user}/#{repo_name}"
-      @github_password = github_password
       @rubygems = Configuration.for 'rubygems'
       @access_token = @rubygems.github_token
+      @github_password = github_password === '' ? @rubygems.github_password : github_password
       @repo_user = repo_user
       @repo_name = repo_name
     end
