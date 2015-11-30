@@ -109,11 +109,18 @@ module Repos
 
     # get the readme file
     def get_readme_word_count
+      stop_words = []
+      File.open(File.expand_path("../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
+        f.each_line do |line|
+          stop_words << line.gsub(/\n/,"")
+        end
+      end
+
       readme = HTTParty.get(@GITHUB_README_URL)
       words = readme.split(' ')
       freqs = Hash.new(0)
       words.each do |word|
-        if word =~ /^\w+$/
+        if word =~ /^\w+$/ && !stop_words.include?(word)
           freqs[word] += 1 
         end
       end
