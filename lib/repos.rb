@@ -12,7 +12,7 @@ module Repos
 
   class GithubData
     def initialize(repo_user, repo_name, github_password='')
-      @GITHUB_README_URL = "https://raw.githubusercontent.com/#{repo_user}/#{repo_name}/master/README.md"
+      @GITHUB_README_URL = "https://raw.githubusercontent.com/#{repo_user}/#{repo_name}/master"
       @GITHUB_API_BASE_URL = "https://api.github.com/repos/#{repo_user}/#{repo_name}"
       @rubygems = Configuration.for 'rubygems'
       @access_token = @rubygems.github_token
@@ -109,6 +109,12 @@ module Repos
 
     # get the readme file
     def get_readme_word_count
+      github_contents = HTTParty.get(@GITHUB_API_BASE_URL + '/contents')
+      readme_file = ''
+      github_contents.each do |content|
+        readme_file = content['name'] if content['name'] =~ /^README/
+      end
+
       stop_words = []
       File.open(File.expand_path("../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
         f.each_line do |line|
@@ -116,7 +122,7 @@ module Repos
         end
       end
 
-      readme = HTTParty.get(@GITHUB_README_URL)
+      readme = HTTParty.get(@GITHUB_README_URL + "/#{readme_file}")
       words = readme.split(' ')
       freqs = Hash.new(0)
       words.each do |word|
