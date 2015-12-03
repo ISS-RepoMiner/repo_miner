@@ -47,6 +47,8 @@ questions = stackoverflow.get_questions
 # aggregate the data
 gem_info = {
   'name'  => gem_name,
+  'repo_name' => repo_name,
+  'repo_username' => repo_username,
   'total_downloads' => total_downloads,
   'version_downloads' => version_downloads,
   'version_downloads_days' => version_downloads_trend,
