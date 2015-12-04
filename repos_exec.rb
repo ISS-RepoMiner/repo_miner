@@ -42,7 +42,7 @@ total_downloads = rubygems.get_total_downloads
 ranking = ruby_toolbox.get_ranking
 
 #stackoverflow info
-questions = stackoverflow.get_questions
+questions, questions_word_count = stackoverflow.get_questions
 
 # aggregate the data
 gem_info = {
@@ -64,6 +64,7 @@ gem_info = {
   'issues_info' => issues_info,
   'readme_word_count' => readme_word_count,
   'questions' => questions,
+  'questions_word_count' => questions_word_count,
   'created_at' => DateTime.now
 }
 

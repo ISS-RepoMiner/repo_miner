@@ -253,7 +253,15 @@ module Repos
         }
       end
 
-      questions
+      questions_word_count = Hash.new(0)
+      questions.each do |question|
+        question['title'].each do |word|
+          questions_word_count[word] += 1
+        end
+      end
+
+      questions_word_count = questions_word_count.sort_by { |word, freq| freq }.reverse!
+      [questions, questions_word_count]
     end
   end
 
