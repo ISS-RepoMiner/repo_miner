@@ -227,12 +227,28 @@ module Repos
 
     #get questions from stackexchange
     def get_questions
+
+      stop_words = []
+      File.open(File.expand_path("../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
+        f.each_line do |line|
+          stop_words << line.gsub(/\n/,"")
+        end
+      end
+
       questions = []
       fetch_questions = HTTParty.get(@STACKOVERFLOW_API)
       fetch_questions['items'].each do |q|
+        #don't store stop words
+        good_words = []
+        q['title'].split(' ').map do |word|
+          if !stop_words.include?(word.downcase)
+            good_words << word
+          end
+        end
+
         questions << {
           'creation_date' => q['creation_date'],
-          'title' => q ['title'].split(' '),
+          'title' => good_words,
           'views' => q['view_count']
         }
       end
