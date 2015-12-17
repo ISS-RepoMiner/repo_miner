@@ -17,18 +17,23 @@ module Repos
       @rubygems = Configuration.for 'rubygems'
       @access_token = @rubygems.github_token
       @github_password = github_password === '' ? @rubygems.github_password : github_password
+      @user_agent = @rubygems.user_agent
       @repo_user = repo_user
       @repo_name = repo_name
     end
     
     # get the commit activity in last year
     def get_last_year_commit_activity
-      last_year_commit_activity = HTTParty.get(@GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{@access_token}")
+      last_year_commit_activity = HTTParty.get(@GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
     end
 
     # Get the contributors
     def get_contributors
-      contributors = HTTParty.get(@GITHUB_API_BASE_URL + "/contributors?access_token=#{@access_token}").map do |contributor|
+      contributors = HTTParty.get(@GITHUB_API_BASE_URL + "/contributors?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      }).map do |contributor|
         {
           'name' => contributor['login'],
           'contributions' => contributor['contributions']
@@ -50,21 +55,27 @@ module Repos
 
     # get numbers of forks, stars and issues
     def get_forks
-      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL)
+      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
       forks = repos_meta['forks_count']
 
       forks
     end
 
     def get_stars
-      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL)
+      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
       stars = repos_meta['stargazers_count']
 
       stars
     end
 
     def get_issues
-      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL)
+      repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
       issues = repos_meta['open_issues_count']
 
       issues
@@ -77,7 +88,9 @@ module Repos
       page = 1
 
       until stop
-        issue_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/issues?state=closed&page=#{page}&access_token=#{@access_token}")
+        issue_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/issues?state=closed&page=#{page}&access_token=#{@access_token}", headers: {
+          "User-Agent" => @user_agent
+        })
         if issue_fetch.count === 0
           stop = true
         end
@@ -109,7 +122,9 @@ module Repos
 
     # get the readme file
     def get_readme_word_count
-      github_contents = HTTParty.get(@GITHUB_API_BASE_URL + '/contents')
+      github_contents = HTTParty.get(@GITHUB_API_BASE_URL + "/contents?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
       readme_file = ''
       github_contents.each do |content|
         readme_file = content['name'] if content['name'] =~ /^README/
