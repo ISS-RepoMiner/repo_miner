@@ -1,4 +1,6 @@
-require_relative './lib/repos.rb'
+#!/usr/bin/env ruby
+
+require 'repocrawler'
 
 `stty -echo`
 print 'Github Password (not stored): '
