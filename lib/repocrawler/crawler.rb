@@ -131,7 +131,7 @@ module Repos
       end
 
       stop_words = []
-      File.open(File.expand_path("../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
+      File.open(File.expand_path("../../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
         f.each_line do |line|
           stop_words << line.gsub(/\n/,"")
         end
@@ -244,7 +244,7 @@ module Repos
     def get_questions
 
       stop_words = []
-      File.open(File.expand_path("../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
+      File.open(File.expand_path("../../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
         f.each_line do |line|
           stop_words << line.gsub(/\n/,"")
         end
