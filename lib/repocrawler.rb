@@ -1,1 +1,1 @@
-require 'repocrawler/repocrawler.rb'
+require 'repocrawler/crawler.rb'
