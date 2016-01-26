@@ -27,7 +27,6 @@ module Repos
       last_year_commit_activity = HTTParty.get(@GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
-      puts last_year_commit_activity.headers
     end
 
     # Get the contributors
@@ -41,7 +40,6 @@ module Repos
         }
       end
 
-      puts contributors.headers
       contributors
     end
 
@@ -62,7 +60,6 @@ module Repos
       })
       forks = repos_meta['forks_count']
 
-      puts repos_meta.headers
       forks
     end
 
@@ -72,7 +69,6 @@ module Repos
       })
       stars = repos_meta['stargazers_count']
 
-      puts repos_meta.headers
       stars
     end
 
@@ -82,7 +78,6 @@ module Repos
       })
       issues = repos_meta['open_issues_count']
 
-      puts repos_meta.headers
       issues
     end 
 
@@ -100,7 +95,6 @@ module Repos
           stop = true
         end
 
-        puts issue_fetch.headers
 
         issue_fetch.each do |issue|
           closed_issues << {
@@ -133,7 +127,6 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      puts github_contents.headers
 
       readme_file = ''
       github_contents.each do |content|
