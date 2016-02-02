@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'gems'
-require 'mongo'
 require 'github_api'
 require 'httparty'
 require 'nokogiri'
