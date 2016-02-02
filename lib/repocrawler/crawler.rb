@@ -27,6 +27,9 @@ module Repos
       last_year_commit_activity = HTTParty.get(@GITHUB_API_BASE_URL + "/stats/commit_activity?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
+
+      last_year_commit_activity.delete_if {|record| record['total'] == 0}
+      last_year_commit_activity
     end
 
     # Get the contributors
