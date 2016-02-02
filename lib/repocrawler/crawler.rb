@@ -196,6 +196,10 @@ module Repos
       end.reverse!
 
       version_downloads_trend.compact! if version_downloads_trend.include? nil
+
+      version_downloads_trend.each do |version|
+        version['downloads_date'].delete_if {|_key, value| value == 0}
+      end
       version_downloads_trend
     end
 
