@@ -9,12 +9,13 @@ require 'open-uri'
 module Repos
 
   class GithubData
-    def initialize(repo_user, repo_name, github_password='')
+    def initialize(repo_user, repo_name, github_token, github_password, github_account, user_agent)
       @GITHUB_README_URL = "https://raw.githubusercontent.com/#{repo_user}/#{repo_name}/master"
       @GITHUB_API_BASE_URL = "https://api.github.com/repos/#{repo_user}/#{repo_name}"
-      @access_token = ENV['github_token']
-      @github_password = github_password === '' ? ENV['github_password'] : github_password
-      @user_agent = ENV['user_agent']
+      @access_token = github_token
+      @github_password = github_password
+      @github_account = github_account
+      @user_agent = user_agent
       @repo_user = repo_user
       @repo_name = repo_name
     end
@@ -112,7 +113,7 @@ module Repos
 
     # get the date of the last commit
     def get_last_commits_days
-      github = Github.new basic_auth: "#{ENV['github_account']}:#{@github_password}"
+      github = Github.new basic_auth: "#{@github_account}:#{@github_password}"
 
       commit = github.repos.commits.list(@repo_user, @repo_name).to_ary[0].to_hash['commit']['author']['date']
       last_commit = (Date.today - Date.parse(commit)).to_i
@@ -216,8 +217,8 @@ module Repos
   end
 
   class RubyToolBoxData
-    def initialize(gem_name)
-      @user_agent = ENV['user_agent']
+    def initialize(gem_name, user_agent)
+      @user_agent = user_agent
       @RUBY_TOOLBOX_BASE_URL = "https://www.ruby-toolbox.com/projects/"
       @RANKING_PATH = "//div[@class='teaser-bar']//li[last()-1]//a"
       @gem_name = gem_name
@@ -239,8 +240,8 @@ module Repos
   end
 
   class StackOverflow
-    def initialize(gem_name)
-      @STACKOVERFLOW_API = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=creation&q=#{gem_name}&site=stackoverflow&key=#{ENV['stackoverflow_token']}"
+    def initialize(gem_name, stackoverflow_token)
+      @STACKOVERFLOW_API = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=creation&q=#{gem_name}&site=stackoverflow&key=#{stackoverflow_token}"
     end
 
     #get questions from stackexchange
