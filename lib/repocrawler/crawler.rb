@@ -29,7 +29,6 @@ module Repos
       })
 
       last_year_commit_activity.delete_if {|record| record['total'] == 0}
-      last_year_commit_activity
     end
 
     # Get the contributors
@@ -200,7 +199,6 @@ module Repos
       version_downloads_trend.each do |version|
         version['downloads_date'].delete_if {|_key, value| value == 0}
       end
-      version_downloads_trend
     end
 
     # get the dependencies
