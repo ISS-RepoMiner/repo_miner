@@ -186,7 +186,8 @@ module Repos
           version_downloads_days = Gems.downloads @gem_name, version['number'], start, end_date
           {
             'number' => version['number'],
-            'downloads_date' => version_downloads_days
+            'downloads_date' => version_downloads_days,
+            'created_at'  => version['created_at']
           }
         end
       end.reverse!
