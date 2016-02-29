@@ -80,6 +80,31 @@ module Repos
       issues
     end 
 
+    # get commits history
+    def get_commits_history
+      commits_info = []
+      stop = false
+      page = 1
+
+      until stop
+        commits_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/commits?page=#{page}&access_token=#{@access_token}", headers: {
+          "User-Agent" => @user_agent
+        })
+        if commits_fetch.count === 0
+          stop = true
+        end
+
+        commits_fetch.each do |commit|
+          commits_info << {
+            "committer"     => commit['commit']['committer']['name']
+            "created_at"    => commit['commit']['committer']['date']
+          }
+        end
+      end
+
+      commits_info.reverse!
+    end
+
     # get information of the closed issues
     def get_issues_info
       closed_issues = []
