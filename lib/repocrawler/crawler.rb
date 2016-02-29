@@ -100,6 +100,8 @@ module Repos
             "created_at"    => commit['commit']['committer']['date']
           }
         end
+
+        page += 1
       end
 
       commits_info.reverse!
