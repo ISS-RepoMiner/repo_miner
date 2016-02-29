@@ -96,7 +96,7 @@ module Repos
 
         commits_fetch.each do |commit|
           commits_info << {
-            "committer"     => commit['commit']['committer']['name']
+            "committer"     => commit['commit']['committer']['name'],
             "created_at"    => commit['commit']['committer']['date']
           }
         end
