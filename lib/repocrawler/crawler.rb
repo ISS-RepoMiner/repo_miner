@@ -142,7 +142,7 @@ module Repos
       commits_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/commits?access_token=#{@access_token}", headers: {
           "User-Agent" => @user_agent
       })
-      last_commit_date = commits_fetch.first['commit']['comitter']['date']
+      last_commit_date = commits_fetch.first['commit']['author']['date']
       last_commit = (Date.today - Date.parse(last_commit_date)).to_i
 
       last_commit
