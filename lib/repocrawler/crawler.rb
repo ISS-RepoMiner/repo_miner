@@ -37,11 +37,16 @@ module Repos
     def get_contributors
       contributors = HTTParty.get(@GITHUB_API_BASE_URL + "/contributors?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
-      }).map do |contributor|
-        {
-          'name' => contributor['login'],
-          'contributions' => contributor['contributions']
-        }
+      })
+      if contributors['message'] === 'Not Found'
+        contributor = nil
+      else
+        contributors.map do |contributor|
+          {
+            'name' => contributor['login'],
+            'contributions' => contributor['contributions']
+          }
+        end
       end
 
       contributors
@@ -50,8 +55,13 @@ module Repos
     # get the total commits
     def get_total_commits
       contributors = get_contributors
-      commits = contributors.reduce(0) do |sum, num|
-        sum + num['contributions']
+
+      if contributors.nil?
+        commits = nil
+      else
+        commits = contributors.reduce(0) do |sum, num|
+          sum + num['contributions']
+        end
       end
 
       commits
@@ -110,6 +120,11 @@ module Repos
         commits_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/commits?page=#{page}&access_token=#{@access_token}", headers: {
           "User-Agent" => @user_agent
         })
+
+        if commits_fetch['message'] === 'Not Found'
+          break
+        end
+
         if commits_fetch.count === 0
           stop = true
         end
@@ -137,6 +152,11 @@ module Repos
         issue_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/issues?state=closed&page=#{page}&access_token=#{@access_token}", headers: {
           "User-Agent" => @user_agent
         })
+
+        if issue_fetch['message'] === 'Not Found'
+          break
+        end
+
         if issue_fetch.count === 0
           stop = true
         end
@@ -179,30 +199,33 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-
-      readme_file = ''
-      github_contents.each do |content|
-        readme_file = content['name'] if content['name'] =~ /^README/
-      end
-
-      stop_words = []
-      File.open(File.expand_path("../../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
-        f.each_line do |line|
-          stop_words << line.gsub(/\n/,"")
+      if github_contents['message'] === 'Not Found'
+        return nil
+      else
+        readme_file = ''
+        github_contents.each do |content|
+          readme_file = content['name'] if content['name'] =~ /^README/
         end
-      end
 
-      readme = HTTParty.get(@GITHUB_README_URL + "/#{readme_file}")
-      words = readme.split(' ')
-      freqs = Hash.new(0)
-      words.each do |word|
-        if word =~ /^\w+$/ && !stop_words.include?(word.downcase)
-          freqs[word] += 1 
+        stop_words = []
+        File.open(File.expand_path("../../public/stop_words.txt",  File.dirname(__FILE__)), "r") do |f|
+          f.each_line do |line|
+            stop_words << line.gsub(/\n/,"")
+          end
         end
-      end
-      freqs = freqs.sort_by { |word, freq| freq }.reverse!
 
-      freqs
+        readme = HTTParty.get(@GITHUB_README_URL + "/#{readme_file}")
+        words = readme.split(' ')
+        freqs = Hash.new(0)
+        words.each do |word|
+          if word =~ /^\w+$/ && !stop_words.include?(word.downcase)
+            freqs[word] += 1
+          end
+        end
+        freqs = freqs.sort_by { |word, freq| freq }.reverse!
+
+        freqs
+      end
     end
   end
   
