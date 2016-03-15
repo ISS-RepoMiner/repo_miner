@@ -25,7 +25,12 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      last_year_commit_activity.delete_if {|record| record['total'] == 0}
+      if last_year_commit_activity['message'] === 'Not Found'
+        get_last_year_commit_activity = nil
+      else
+        last_year_commit_activity.delete_if {|record| record['total'] == 0}
+      end
+
     end
 
     # Get the contributors
@@ -57,7 +62,12 @@ module Repos
       repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
-      forks = repos_meta['forks_count']
+
+      if repos_meta['message'] === 'Not Found'
+        forks = nil
+      else
+        forks = repos_meta['forks_count']
+      end
 
       forks
     end
@@ -66,7 +76,12 @@ module Repos
       repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
-      stars = repos_meta['stargazers_count']
+
+      if repos_meta['message'] === 'Not Found'
+        stars = nil
+      else
+        stars = repos_meta['stargazers_count']
+      end
 
       stars
     end
@@ -75,7 +90,12 @@ module Repos
       repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
-      issues = repos_meta['open_issues_count']
+
+      if repos_meta['message'] === 'Not Found'
+        issues = nil
+      else
+        issues = repos_meta['open_issues_count']
+      end
 
       issues
     end 
@@ -142,8 +162,13 @@ module Repos
       commits_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/commits?access_token=#{@access_token}", headers: {
           "User-Agent" => @user_agent
       })
-      last_commit_date = commits_fetch.first['commit']['author']['date']
-      last_commit = (Date.today - Date.parse(last_commit_date)).to_i
+
+      if commits_fetch['message'] === 'Not Found'
+        last_commit = nil
+      else
+        last_commit_date = commits_fetch.first['commit']['author']['date']
+        last_commit = (Date.today - Date.parse(last_commit_date)).to_i
+      end
 
       last_commit
     end
