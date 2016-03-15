@@ -25,7 +25,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if last_year_commit_activity['message'] === 'Not Found'
+      if last_year_commit_activity.is_a?(Hash) && last_year_commit_activity['message'] === 'Not Found'
         last_year_commit_activity = nil
       else
         last_year_commit_activity.delete_if {|record| record['total'] == 0}
@@ -40,7 +40,7 @@ module Repos
       contributors = HTTParty.get(@GITHUB_API_BASE_URL + "/contributors?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
-      if contributors['message'] === 'Not Found'
+      if contributors.is_a?(Hash) && contributors['message'] === 'Not Found'
         contributors = nil
       else
         contributors.map! do |contributor|
@@ -75,7 +75,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if repos_meta['message'] === 'Not Found'
+      if repos_meta.is_a?(Hash) && repos_meta['message'] === 'Not Found'
         forks = nil
       else
         forks = repos_meta['forks_count']
@@ -89,7 +89,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if repos_meta['message'] === 'Not Found'
+      if repos_meta.is_a?(Hash) && repos_meta['message'] === 'Not Found'
         stars = nil
       else
         stars = repos_meta['stargazers_count']
@@ -103,7 +103,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if repos_meta['message'] === 'Not Found'
+      if repos_meta.is_a?(Hash) && repos_meta['message'] === 'Not Found'
         issues = nil
       else
         issues = repos_meta['open_issues_count']
@@ -123,7 +123,7 @@ module Repos
           "User-Agent" => @user_agent
         })
 
-        if commits_fetch['message'] === 'Not Found'
+        if commits_fetch.is_a?(Hash) && commits_fetch['message'] === 'Not Found'
           break
         end
 
@@ -155,7 +155,7 @@ module Repos
           "User-Agent" => @user_agent
         })
 
-        if issue_fetch['message'] === 'Not Found'
+        if issue_fetch.is_a?(Hash) && issue_fetch['message'] === 'Not Found'
           break
         end
 
@@ -185,7 +185,7 @@ module Repos
           "User-Agent" => @user_agent
       })
 
-      if commits_fetch['message'] === 'Not Found'
+      if commits_fetch.is_a?(Hash) && commits_fetch['message'] === 'Not Found'
         last_commit = nil
       else
         last_commit_date = commits_fetch.first['commit']['author']['date']
@@ -201,7 +201,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if github_contents['message'] === 'Not Found'
+      if github_contents.is_a?(Hash) && github_contents['message'] === 'Not Found'
         return nil
       else
         readme_file = ''
