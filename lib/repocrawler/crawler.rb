@@ -26,12 +26,12 @@ module Repos
       })
 
       if last_year_commit_activity['message'] === 'Not Found'
-        get_last_year_commit_activity = nil
+        last_year_commit_activity = nil
       else
         last_year_commit_activity.delete_if {|record| record['total'] == 0}
       end
 
-      get_last_year_commit_activity
+      last_year_commit_activity
 
     end
 
@@ -43,7 +43,7 @@ module Repos
       if contributors['message'] === 'Not Found'
         contributors = nil
       else
-        contributors.map do |contributor|
+        contributors.map! do |contributor|
           {
             'name' => contributor['login'],
             'contributions' => contributor['contributions']
