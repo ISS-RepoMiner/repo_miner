@@ -31,6 +31,8 @@ module Repos
         last_year_commit_activity.delete_if {|record| record['total'] == 0}
       end
 
+      get_last_year_commit_activity
+
     end
 
     # Get the contributors
@@ -39,7 +41,7 @@ module Repos
         "User-Agent" => @user_agent
       })
       if contributors['message'] === 'Not Found'
-        contributor = nil
+        contributors = nil
       else
         contributors.map do |contributor|
           {
@@ -224,7 +226,7 @@ module Repos
         end
         freqs = freqs.sort_by { |word, freq| freq }.reverse!
 
-        freqs
+        return freqs
       end
     end
   end
