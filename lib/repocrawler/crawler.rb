@@ -229,6 +229,24 @@ module Repos
         return freqs
       end
     end
+
+    # get readme raw text
+    def get_readme_raw_text
+      readme = HTTParty.get(@GITHUB_API_BASE_URL + "/readme?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
+
+      if readme.is_a?(Hash) && readme['message'] === 'Not Found'
+        return nil
+      else
+        readme_content = {
+          'content'   => readme['content'],
+          'encoding'  => readme['encoding']
+        }
+      end
+
+      readme_content
+    end
   end
   
   class RubyGemsData
