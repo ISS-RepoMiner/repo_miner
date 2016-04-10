@@ -251,12 +251,14 @@ module Repos
     # check if the project has test
     # TODO: recursively search
     def get_test
+      has_test = 0;
+
       contents = HTTParty.get(@GITHUB_API_BASE_URL + "/contents?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
 
       if contents.is_a?(Hash) && contents['message'] === 'Not Found'
-        return 0
+        return has_test
       else
         contents.select do |content|
           (content['name'] === 'spec' || content['name'] === 'test') && content['type'] === 'dir' ? has_test = 1 : has_test = 0
