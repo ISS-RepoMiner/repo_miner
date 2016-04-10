@@ -247,6 +247,24 @@ module Repos
 
       readme_content
     end
+
+    # check if the project has test
+    # TODO: recursively search
+    def get_test
+      contents = HTTParty.get(@GITHUB_API_BASE_URL + "contents?access_token=#{@access_token}", headers: {
+        "User-Agent" => @user_agent
+      })
+
+      if readme.is_a?(Hash) && readme['message'] === 'Not Found'
+        return 0
+      else
+        contents.select do |content|
+          (content['name'] === 'spec' || content['name'] === 'test') && content['type'] === 'dir' ? has_test = 1 : has_test = 0
+        end
+
+        return has_test
+      end
+    end
   end
   
   class RubyGemsData
