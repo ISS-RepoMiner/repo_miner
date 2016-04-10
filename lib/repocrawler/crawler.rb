@@ -251,7 +251,7 @@ module Repos
     # check if the project has test
     # TODO: recursively search
     def get_test
-      contents = HTTParty.get(@GITHUB_API_BASE_URL + "contents?access_token=#{@access_token}", headers: {
+      contents = HTTParty.get(@GITHUB_API_BASE_URL + "/contents?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
       })
 
