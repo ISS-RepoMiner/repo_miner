@@ -255,7 +255,7 @@ module Repos
         "User-Agent" => @user_agent
       })
 
-      if readme.is_a?(Hash) && readme['message'] === 'Not Found'
+      if contents.is_a?(Hash) && contents['message'] === 'Not Found'
         return 0
       else
         contents.select do |content|
