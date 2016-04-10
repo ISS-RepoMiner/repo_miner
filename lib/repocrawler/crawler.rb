@@ -260,10 +260,11 @@ module Repos
       if contents.is_a?(Hash) && contents['message'] === 'Not Found'
         return has_test
       else
-        contents.select do |content|
-          (content['name'] === 'spec' || content['name'] === 'test') && content['type'] === 'dir' ? has_test = 1 : has_test = 0
+        test_folder = contents.select do |content|
+          (content['name'] === 'spec' || content['name'] === 'test') && content['type'] === 'dir'
         end
 
+         test_folder.empty? ? has_test = 0 : has_test = 1
         return has_test
       end
     end
