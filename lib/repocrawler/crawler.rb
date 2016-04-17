@@ -98,6 +98,7 @@ module Repos
       stars
     end
 
+    # get current open issues
     def get_issues
       repos_meta = HTTParty.get(@GITHUB_API_BASE_URL + "?access_token=#{@access_token}", headers: {
         "User-Agent" => @user_agent
@@ -111,6 +112,7 @@ module Repos
 
       issues
     end 
+
 
     # get commits history
     def get_commits_history
@@ -142,6 +144,19 @@ module Repos
       end
 
       commits_info.reverse!
+    end
+
+    # get total number of issues
+    def get_total_issues
+      issues_fetch = HTTParty.get(@GITHUB_API_BASE_URL + "/issues?state=all&access_token=#{@access_token}", headers: {
+          "User-Agent" => @user_agent
+        })
+
+      if issue_fetch.is_a?(Hash) && issue_fetch['message'] === 'Not Found'
+        break
+      end
+
+      issues_fetch.count == 0 ? return 0 : return issues_fetch.first['number']
     end
 
     # get information of the closed issues
