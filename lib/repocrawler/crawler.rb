@@ -153,7 +153,7 @@ module Repos
         })
 
       issues_num = 0
-      return issues_num if issue_fetch.is_a?(Hash) && issue_fetch['message'] === 'Not Found'
+      return issues_num if issues_fetch.is_a?(Hash) && issues_fetch['message'] === 'Not Found'
         
       issues_num = issues_fetch.first['number'] if issues_fetch.count != 0
 
