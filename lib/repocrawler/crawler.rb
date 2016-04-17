@@ -261,7 +261,9 @@ module Repos
         return has_test
       else
         test_folder = contents.select do |content|
-          (content['name'] === 'spec' || content['name'] === 'test') && content['type'] === 'dir'
+          match = content['name'] =~ /(spec)|(test)/
+
+          !match.nil? && content['type'] === 'dir'
         end
 
          test_folder.empty? ? has_test = 0 : has_test = 1
