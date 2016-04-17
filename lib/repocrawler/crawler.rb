@@ -152,11 +152,12 @@ module Repos
           "User-Agent" => @user_agent
         })
 
-      if issue_fetch.is_a?(Hash) && issue_fetch['message'] === 'Not Found'
-        break
-      end
+      issues_num = 0
+      return issues_num if issue_fetch.is_a?(Hash) && issue_fetch['message'] === 'Not Found'
+        
+      issues_num = issues_fetch.first['number'] if issues_fetch.count != 0
 
-      issues_fetch.count == 0 ? return 0 : return issues_fetch.first['number']
+      issues_num
     end
 
     # get information of the closed issues
